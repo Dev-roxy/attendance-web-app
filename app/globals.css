@@ -2,6 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
+
+@layer utilities{
+  .bg-nav-color{
+    background-color: #3f0072;
+  }
+  .highlight-header-color{
+    background-color: #342fd1;
+  }
+  .highlight-color{
+    background-color: #FB2576;
+  }
+  .special-highlight-color{
+    background-color: green;
+
+  }
+  .present-color{
+    background-color: green;
+  }
+  .absent-color{
+    background-color: #ff0000;
+  }
+}
+
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
