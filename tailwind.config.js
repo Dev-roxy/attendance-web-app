@@ -7,17 +7,21 @@ module.exports = {
   ],
   theme: {
     screens: {
-      'phone': '320px',
+      phone: "420px",
       // => @media (min-width: 320px) { ... }
 
-      'tablet': '640px',
+      tablet: "640px",
       // => @media (min-width: 640px) { ... }
 
-      'laptop': '1024px',
+      laptop: "1024px",
       // => @media (min-width: 1024px) { ... }
 
-      'desktop': '1280px',
+      desktop: "1280px",
       // => @media (min-width: 1280px) { ... }
+    },
+    fontFamily: {
+      segoeUi: ["Segoe UI", "sans-serif"],
+      poppins: ["Poppins", "sans-serif"],
     },
     extend: {
       colors: {

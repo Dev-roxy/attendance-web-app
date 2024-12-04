@@ -2,29 +2,43 @@
 @tailwind components;
 @tailwind utilities;
 
-
-@layer utilities{
-  .bg-nav-color{
+@layer utilities {
+  .bg-nav-color {
     background-color: #3f0072;
   }
-  .highlight-header-color{
+  .highlight-header-color {
     background-color: #342fd1;
   }
-  .highlight-color{
-    background-color: #FB2576;
+  .highlight-color {
+    background-color: #fb2576;
   }
-  .special-highlight-color{
-    background-color: green;
-
-  }
-  .present-color{
+  .special-highlight-color {
     background-color: green;
   }
-  .absent-color{
+  .present-color {
+    background-color: green;
+  }
+  .absent-color {
     background-color: #ff0000;
+  }
+  .bg-primary {
+    background-color: #f9f3f3;
+  }
+  .font-primary {
+    font-family: 'Poppins', sans-serif;
+    /* font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; */
+  }
+  .primary-select{
+    @apply bg-slate-200 p-1 rounded-md  mx-2 border-none;
+  }
+  .select-container{
+    @apply  text-[20px] flex justify-start box-border px-4 py-2 font-poppins items-center border flex-grow  mx-auto text-2xl rounded-md hover:bg-slate-50 ;
   }
 }
 
+@layer base {
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+}
 
 :root {
   --background: #ffffff;
