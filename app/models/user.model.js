@@ -5,17 +5,15 @@ import jwt from 'jsonwebtoken';
 
 const userSchema = mongoose.Schema(
   {
-    name: {
-      first: {
-        type: String,
-        required: true,
-      },
-      last: {
-        type: String,
-        required: true,
-      },
+    firstName: {
+      type: String,
+      required: true,
     },
-    username: {
+    lastName: {
+      type: String,
+      required: true,
+    },
+    userId: {
       type: String,
       required: true,
       unique: true,
@@ -25,13 +23,13 @@ const userSchema = mongoose.Schema(
     },
     email: {
       type: String,
-      required: true,
       unique: true,
+      default: null,
     },
     phone: {
       type: String,
-      required: true,
       unique: true,
+      default: null,
     },
     password: {
       type: String,
@@ -42,6 +40,7 @@ const userSchema = mongoose.Schema(
       type: String,
     },
     attendanceRecords: [
+      
       {
         date: {
           type: Date,
@@ -62,6 +61,7 @@ const userSchema = mongoose.Schema(
           },
         ],
       },
+      
     ],
   },
   { timestamps: true }
@@ -80,7 +80,7 @@ userSchema.methods.matchPassword = async function (password) {
 userSchema.methods.generateAccessToken = function () {
   const token = jwt.sign(
     {
-      username: this.username,
+      userId: this.userId,
       email: this.email,
       phone: this.phone,
       name: this.name,
@@ -97,7 +97,7 @@ userSchema.methods.generateAccessToken = function () {
 userSchema.methods.generateRefreshToken = function () {
   const token = jwt.sign(
     {
-      username: this.username,
+      userId: this.userId,
     },
     process.env.REFRESH_TOKEN_SECRET,
     {
@@ -109,3 +109,6 @@ userSchema.methods.generateRefreshToken = function () {
 };
 
 export const User = mongoose.model('User', userSchema);
+
+
+

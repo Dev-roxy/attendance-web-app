@@ -31,7 +31,7 @@ const studentSchema = mongoose.Schema(
     },
     gender: {
       type: String,
-      required: true,
+      default:null
     },
     studentBranch: {
       type: String,
