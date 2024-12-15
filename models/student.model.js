@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import { User } from './user.model.js';
 
 const studentSchema = mongoose.Schema(
   {
@@ -12,7 +11,7 @@ const studentSchema = mongoose.Schema(
         required: true,
     },
     studentId : {
-      type: string,
+      type: String,
       required: true,
     },
     rollNo: {
@@ -62,7 +61,7 @@ const studentSchema = mongoose.Schema(
         },
         faculty: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: User,
+          ref: "User",
           required: true,
         },
       },
@@ -71,4 +70,8 @@ const studentSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-export const Student = mongoose.model('Student', studentSchema);
+ const Student = mongoose.model('Student', studentSchema);
+
+ export {
+  Student
+ }

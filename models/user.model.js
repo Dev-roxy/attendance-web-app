@@ -1,9 +1,8 @@
-import mongoose from 'mongoose';
-import { Student } from './student.model';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import mongoose from "mongoose";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
-const userSchema = mongoose.Schema(
+const userSchema = new mongoose.Schema(
   {
     firstName: {
       type: String,
@@ -40,7 +39,6 @@ const userSchema = mongoose.Schema(
       type: String,
     },
     attendanceRecords: [
-      
       {
         date: {
           type: Date,
@@ -50,25 +48,24 @@ const userSchema = mongoose.Schema(
           {
             studentId: {
               type: mongoose.Schema.Types.ObjectId,
-              ref: 'Student',
+              ref: "Student",
               required: true,
             },
             attendanceStatus: {
               type: String,
               required: true,
-              enum: ['present', 'absent'],
+              enum: ["present", "absent"],
             },
           },
         ],
       },
-      
     ],
   },
   { timestamps: true }
 );
 
-userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
   this.password = await bcrypt.hash(this.password, 12);
   next();
 });
@@ -94,6 +91,7 @@ userSchema.methods.generateAccessToken = function () {
 
   return token;
 };
+
 userSchema.methods.generateRefreshToken = function () {
   const token = jwt.sign(
     {
@@ -108,7 +106,6 @@ userSchema.methods.generateRefreshToken = function () {
   return token;
 };
 
-export const User = mongoose.model('User', userSchema);
+const User = mongoose.models.User || mongoose.model("User", userSchema);
 
-
-
+export { User };

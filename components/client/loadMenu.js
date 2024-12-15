@@ -9,11 +9,11 @@ const loadMenu = () => {
 
   return (
     <>
-      <section className="load w-80 min-h-[300px] bg-white mt-2 pt-[1px] rounded-lg shadow-md ">
+      <section className="load w-80 min-h-[300px] flex flex-col justify-center items-center bg-white mt-2 pt-[1px] rounded-lg shadow-md ">
         <div className="text-xl w-[93.33%] mt-2 flex justify-start items-center box-border px-4 py-2 mx-auto rounded-lg  text-[#3F0071] bg-[#D7D7D7] font-medium  font-poppins  h-[35px]">
           Search Students
         </div>
-        <div className="inputs mt-2 flex  flex-wrap gap-1 mx-auto w-[93.33%]">
+        <div className="inputs mt-2 h-full flex  flex-wrap gap-1 mx-auto w-[93.33%]">
           <div className="select-container">
             <span>Faculty of </span>
             <select
@@ -46,7 +46,7 @@ const loadMenu = () => {
             </select>
           </div>
         </div>
-        <div className="button mx-auto  flex mt-2  w-[93.33%] ">
+        <div className="button   flex-grow flex  justify-center items-center  mt-2  w-[93.33%] ">
           <button
             type="button"
             onClick={handleClick}
