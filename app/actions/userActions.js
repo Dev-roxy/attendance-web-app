@@ -1,5 +1,5 @@
 "use server";
-import jwt from "jsonwebtoken";
+import * as jose from "jose";
 import { asyncHandler } from "../../utils/asyncHandler";
 import { ApiError } from "next/dist/server/api-utils";
 import { ApiResponse } from "../../utils/ApiResponse";
@@ -9,8 +9,9 @@ import { connectDB } from "@/connections/index";
 
 import { redirect } from "next/navigation";
 import { NextResponse } from "next/server";
+import next from "next";
 // to access cookies of the user
-const userCookies = await cookies();
+
 
 // cookies options
 const cookiesOptions = {
@@ -20,14 +21,19 @@ const cookiesOptions = {
 
 // Generate access and refresh token
 const generateAccessAndRefreshToken = async user => {
+  await connectDB();
   try {
-    const accessToken = await jwt.sign(
-      { userId: user.userId },
+    const accessToken = await jose.SignJWT(
+      {
+        userId: user.userId,
+        email: user.email,
+        password: user.password,
+      },
       process.env.ACCESS_TOKEN_SECRET,
       { expiresIn: process.env.ACCESS_TOKEN_EXPIRE }
     );
-    const refreshToken = await jwt.sign(
-      { userId: user._id },
+    const refreshToken = await jose.SignJWT(
+      { userId: user.userId },
       process.env.REFRESH_TOKEN_SECRET,
       { expiresIn: process.env.REFRESH_TOKEN_EXPIRE }
     );
@@ -35,38 +41,8 @@ const generateAccessAndRefreshToken = async user => {
   } catch (error) {
     throw new ApiError(500, error.message);
   }
-
 };
 
-const loginUserAction = async event => {
-  let isUserValid = false;
-  // just a dummy login for development purposes
-  try {
-    await connectDB();
-    const email = event.get("email");
-    const password = event.get("password");
-    if (email == "dev@gmail.com" && password == "dev@123") {
-      isUserValid = true;
-    }
 
-    const { accessToken, refreshToken } = await generateAccessAndRefreshToken(User);
-
-    // set the access token in the cookies
-    userCookies.set("accessToken", accessToken, cookiesOptions)
-    .set("refreshToken", refreshToken, cookiesOptions);
-      isUserValid = true; //set to true if login is successfull
-
-    return new ApiResponse(200, { message: "Login successful" });
-  } catch (error) {
-    return new ApiError(500, error.message);
-  } finally {
-    if (isUserValid) {
-      console.log("Login successful");
-      redirect("/dashboard"); //redirect to dashboard
-    } else {
-      console.log("Login failed"); //login failed message to be displayed
-    }
-  }
-};
 
 export { loginUserAction };

@@ -1,6 +1,7 @@
 import localFont from "next/font/local";
-import NextTopLoader from "nextjs-toploader";
 import "./globals.css";
+import ProgressBar from "@/components/ProgressBar";
+import NextTopLoader from "nextjs-toploader";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -20,11 +21,11 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+      <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased  `}
-      >
-        <NextTopLoader height={2} color={"#2f6fd"} />
+        >
+        <NextTopLoader />
         {children}
       </body>
     </html>

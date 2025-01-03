@@ -12,10 +12,12 @@
     "@next/env": "^15.1.0",
     "bcrypt": "^5.1.1",
     "dotenv": "^16.4.7",
+    "jose": "^5.9.6",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.8.3",
     "next": "15.0.3",
     "nextjs-toploader": "^3.7.15",
+    "nprogress": "^0.2.0",
     "react": "19.0.0-rc-66855b96-20241106",
     "react-dom": "19.0.0-rc-66855b96-20241106"
   },

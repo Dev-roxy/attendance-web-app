@@ -1,32 +1,22 @@
 import { NextResponse } from 'next/server';
-import jwt from 'jsonwebtoken';
+import { jwtVerify } from 'jose';
 
 export async function middleware(request) {
-
- 
-
-  const token =  request.headers.get('Authorization')?.split(' ')[1] || null;
-
-  
+  const token = request.cookies.get('accessToken') || request.headers.get('Authorization')?.split(' ')[1];
+  const accessToken = token.value
   if (!token) {
-    return NextResponse.redirect(new URL('/login' ,request.nextUrl).href);
+    return NextResponse.redirect(new URL('/login', request.url));
   }
+
   try {
-    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-    if (!decoded) {
-      return NextResponse.redirect(new URL('/login' ,request.nextUrl.origin).href);
-    }
-    console.log("decoded",decoded);
-    request.user = decoded;
-    return NextResponse.redirect(new URL('/dashboard' ,request.nextUrl.origin).href);
-
+    const { payload } = await jwtVerify(accessToken, new TextEncoder().encode(process.env.ACCESS_TOKEN_SECRET));
+    request.user = payload;
   } catch (error) {
-    console.log(error.message);
-    
+     return NextResponse.redirect(new URL('/login', request.url));
   }
 
+  return NextResponse.next();
 }
+const protectedRoutes = ["/dashboard" ,"/dashboard/:any*"];
 
-export const config = {
-  matcher: '/:any*',
-};
+
