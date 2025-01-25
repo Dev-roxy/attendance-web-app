@@ -1,4 +1,13 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
-
-export default nextConfig;
+const nextConfig = {
+    webpack: (config) => {
+      config.experiments = {
+        ...config.experiments,
+        asyncWebAssembly: true, // Enable WebAssembly
+      };
+      return config;
+    },
+  };
+  
+  export default nextConfig;
+  

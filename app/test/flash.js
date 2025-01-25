@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 
-const FlashMessage = ({ message, success ,callback}) => {
+const FlashMessage = ({ message, success }) => {
   const [visible, setVisible] = useState(true);
   const [progress, setProgress] = useState(100);
 
@@ -13,7 +13,6 @@ const FlashMessage = ({ message, success ,callback}) => {
     if (progress === 0) {
       setVisible(false);
       clearInterval(interval);
-      callback("");
     }
 
     return () => clearInterval(interval);
@@ -23,8 +22,8 @@ const FlashMessage = ({ message, success ,callback}) => {
 
   return (
     <div
-      className={`fixed z-50 top-5 right-5 p-4 rounded-lg shadow-lg text-white 
-        ${success ? 'bg-green-500' : 'bg-red-500'} text-gray-400`}
+      className={`fixed top-5 right-5 p-4 rounded-lg shadow-lg text-white 
+        ${success ? 'bg-green-500' : 'bg-red-500'}`}
     >
       <div>{message}</div>
       <div className="w-full bg-gray-200 h-1 mt-2 rounded">

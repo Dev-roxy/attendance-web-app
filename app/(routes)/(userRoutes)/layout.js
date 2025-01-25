@@ -1,6 +1,8 @@
 import Navbar from "@/components/client/Navbar";
 import Footer from "@/components/client/footer.js";
 
+
+
 export const metadata = {
   title: "Dashboard - AMS",
   description:

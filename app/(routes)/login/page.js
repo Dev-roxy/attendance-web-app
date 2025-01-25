@@ -1,119 +1,606 @@
 "use client";
-import React, { useState } from "react";
+import { useState ,useEffect } from "react";
+import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import FlashMessage from "@/components/client/flashMessage";
+import bgImage from "@/app/assets/background.jpg";
 
-const login = () => {
-  const [Message, setMessage] = useState("");
-  const [Success, setSuccess] = useState(true);
-  const [ShowMessage, setShowMessage] = useState(false);
+const AuthPage = () => {
+  
+  const sections = ["A", "B", "C", "D"];
+  const acadmicYears = ["1st", "2nd", "3rd", "4th"];
+  const semisters = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th"];
+  const engineeringBranches = [
+    "Aerospace Engineering",
+    "Agricultural Engineering",
+    "Automobile Engineering",
+    "Biomedical Engineering",
+    "Biotechnology Engineering",
+    "Chemical Engineering",
+    "Civil Engineering",
+    "Computer Science Engineering",
+    "Electrical Engineering",
+    "Electronics and Communication Engineering",
+    "Environmental Engineering",
+    "Industrial Engineering",
+    "Information Technology",
+    "Instrumentation Engineering",
+    "Marine Engineering",
+    "Mechanical Engineering",
+    "Metallurgical Engineering",
+    "Mining Engineering",
+    "Petroleum Engineering",
+    "Production Engineering",
+    "Robotics Engineering",
+    "Software Engineering",
+    "Structural Engineering",
+    "Telecommunication Engineering",
+    "Textile Engineering",
+  ];
 
   const router = useRouter();
 
-  const handleSubmit = async e => {
-    e.preventDefault();
-    const form = document.getElementById("infoForm");
-    const formData = new FormData(form);
-    const formDataEntries = Object.fromEntries(formData);
-    
-    const requestUrl = `/api/login/${formDataEntries.loginAs}`;
+  const [batches, setBatches] = useState([])
+  const [section, setSection] = useState("");
+  const [Message, setMessage] = useState("");
+  const [Success, setSuccess] = useState(false);
+  const [isRegister, setIsRegister] = useState(false);
+  // const [isInstituteRegister, setIsInstituteRegister] = useState(false);
+  const [userType, setUserType] = useState("student");
+  const [isLogin, setIsLogin] = useState(true);
+  const {
+    register,
+    handleSubmit,
+    getValues,
+    formState: { errors, isSubmitting },
+  } = useForm({});
 
-    const response = await fetch(requestUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formDataEntries),
-    }).then(async res => {
-      let data = await res.json();
-      
 
-      setMessage(data.message);
-      setSuccess(data.success);
-      setShowMessage(true);
+  let require = !isRegister ? { required: "Email is required" } : "";
 
-      setTimeout(() => {
-        if (formDataEntries.loginAs === "teacher") {
-          router.push("/dashboard");
-        }else if (formDataEntries.loginAs === "admin") {
-          router.push("/admin/dashboard");
+  const onSubmit = async data => {
+    const loginAs = data.userType;
+    let success = false;
+    if (!isRegister) {
+      const requestUrl = `/api/user/login`;
+      const response = await fetch(requestUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }).then(async res => {
+        try {
+          let data = await res.json();
+          setMessage(data.message);
+          setSuccess(data.success);
+          success = data.success;
+        } catch (err) {
+          console.log(err.message);
         }
-      }, 400);
-    });
+
+        if (success) {
+            if (loginAs === "teacher") {
+              router.push("/student/dashboard");
+            } else if (loginAs === "admin") {
+              router.push("/admin/dashboard");
+            } else if (loginAs === "student") {
+              router.push("/student/dashboard");
+            }
+        }
+      });
+    } else if (isRegister) {
+      delete data.teacherId;
+      delete data.confirmPassword;
+      console.log(data);
+      const requestUrl = `/api/user/register`;
+      const response = await fetch(requestUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }).then(async res => {
+        try {
+          let data = await res.json();
+          setMessage(data.message);
+          setSuccess(data.success);
+          success = data.success;
+        } catch (err) {
+          console.log(err.message);
+        }
+
+        if (success) {
+            setIsRegister(false);
+        }
+      });
+    }
   };
-  
 
   return (
     <>
-      {ShowMessage && (
+      {Message && (
         <FlashMessage
           message={Message}
           success={Success}
-          top={10}
-          right={10}
-          setVisibleState={setShowMessage}
+          callback={setMessage}
         />
       )}
-      <div className="flex items-center justify-center min-h-screen  bg-gray-200">
-        <div className="w-full max-w-md p-8 bg-white rounded shadow-md">
-          <h2 className="text-2xl font-bold text-center text-gray-700 mb-6">
-            Login to AMS
+      <div
+        className={`bg-slate-400 bg-no-repeat bg-cover min-h-screen flex items-center justify-center`}
+      >
+        <div
+          className={`w-fit max-w-[90%] p-8 bg-white bg-opacity-70 backdrop-blur-sm shadow-lg  rounded-lg`}
+        >
+          <h2 className="text-2xl font-bold text-center mb-6">
+            {isRegister ? "Register" : isLogin ? "Login" : "Register Institute"}
           </h2>
-          <form id="infoForm" onSubmit={handleSubmit}>
-            <div className="mx-auto  flex justify-center items-center gap-4 h-4 px-2 py-4">
-              <label className="font-poppins text-xl text-gray-700" htmlFor="teacherBtn" >
-                Teacher
+
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="space-y-6 max-w-[40rem] flex flex-wrap justify-center items-center w-[95%] min-h-[90%] mx-auto"
+          >
+            <div className="flex  justify-center items-center gap-2">
+              <label className="block font-medium text-xl text-nowrap ">
+                User type
               </label>
-              <input type="radio" name="loginAs" id="infoForm" value={'teacher'} required={true}/>
-              <label className="font-poppins text-xl text-gray-700" htmlFor="adminbtn" >
-                Admin
-              </label>
-              <input type="radio" name="loginAs" id="infoForm" value={'admin'}  required={true}/>
-            </div>
-            <div className="mb-4">
-              <label
-                htmlFor="Email"
-                className="block text-sm font-medium text-gray-600 mb-2"
+              <select
+                {...register("userType", {
+                  required: "User Type is required",
+                })}
+                onChange={e => setUserType(e.target.value)}
+                className="w-full  border-gray-300 rounded-md shadow-sm px-4 py-2 border focus:ring-blue-500 focus:border-blue-500"
               >
-                Email
-              </label>
-              <input
-                type="text"
-                id="Email"
-                name="email"
-                autoComplete="off"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                required
-              />
+                <option value="student">Student</option>
+                <option value="teacher">Teacher</option>
+                {!isRegister  && <option value="admin">Admin</option>}
+              </select>
+              {errors.userType && (
+                <p className="text-sm text-red-500 mt-1">
+                  {errors.userType.message}
+                </p>
+              )}
             </div>
-            <div className="mb-4">
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-600 mb-2"
-              >
-                Password
-              </label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                autoComplete="off"
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                required
-              />
+            <div className="w-full">
+              {isRegister && (
+                <div className="w-fit mx-auto flex flex-wrap justify-center gap-2">
+                  <div className="input-group">
+                    <label className="block text-sm font-medium mb-1">
+                      First Name <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      {...register("firstName", {
+                        required: "First Name is required",
+                      })}
+                      className="w-full border-gray-300 px-4 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    />
+                    {errors.firstName && (
+                      <p className="text-sm text-red-500 mt-1">
+                        {errors.firstName.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="input-group">
+                    <label className="block text-sm font-medium mb-1">
+                      Last Name <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      {...register("lastName", {
+                        required: "Last Name is required",
+                      })}
+                      className="w-full border-gray-300 rounded-md shadow-sm px-4 py-2 border focus:ring-blue-500 focus:border-blue-500"
+                    />
+                    {errors.lastName && (
+                      <p className="text-sm text-red-500 mt-1">
+                        {errors.lastName.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              <div className="w-fit mx-auto flex flex-wrap justify-center gap-2">
+                <div className="input-group">
+                  <label className="block text-sm font-medium mb-1">
+                    Email <span className="text-red-500">*</span>
+                  </label>
+
+                  <input
+                    type="text"
+                    {...register("email", {
+                      required: "Email is required",
+                    })}
+                    className="w-full border-gray-300 px-4 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                  />
+                  {errors.email && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {errors.email.message}
+                    </p>
+                  )}
+                </div>
+                {isRegister && (
+                  <div className="input-group">
+                    <label className="block text-sm font-medium mb-1">
+                      Phone Number <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      {...register("phoneNo", {
+                        maxLength: {
+                          value: 10,
+                          message: "Phone number should be 10 digits",
+                        },
+                        minLength: {
+                          value: 10,
+                          message: "Phone number should be 10 digits",
+                        },
+                        required: "Phone is required",
+                      })}
+                      className="w-full border-gray-300 rounded-md shadow-sm px-4 py-2 border focus:ring-blue-500 focus:border-blue-500"
+                    />
+                    {errors.phoneNo && (
+                      <p className="text-sm text-red-500 mt-1">
+                        {errors.phoneNo.message}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              <div className="w-fit mx-auto flex flex-wrap justify-center gap-2">
+                {isRegister && userType && (
+                  <div className="input-group">
+                    <label className="block text-sm font-medium mb-1">
+                      {userType} Id <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      {...register(`${userType}Id`, {
+                        required: `${userType} Id is required`,
+                      })}
+                      className="w-full border-gray-300 rounded-md shadow-sm px-4 py-2 border focus:ring-blue-500 focus:border-blue-500"
+                    />
+                    {errors.userId && (
+                      <p className="text-sm text-red-500 mt-1">
+                        {errors.userId.message}
+                      </p>
+                    )}
+                  </div>
+                )}
+                {isRegister && (
+                  <div className="input-group">
+                    <label className="block text-sm font-medium mb-1">
+                      Institute Name <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      {...register("institute", {
+                        required: "Institute Name is required",
+                      })}
+                      className="w-full border-gray-300 px-4 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    />
+                    {errors.institute && (
+                      <p className="text-sm text-red-500 mt-1">
+                        {errors.institute.message}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+              <>
+                {isRegister && userType === "student" && (
+                  <>
+                    <div className="w-fit mx-auto flex flex-wrap justify-center gap-2">
+                      <div className="input-group">
+                        <label className="block text-sm font-medium mb-1">
+                          Roll No. <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          {...register("rollNo", {
+                            required: "Roll No. is required",
+                          })}
+                          className="w-full border-gray-300 px-4 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                        />
+                        {errors.rollNo && (
+                          <p className="text-sm text-red-500 mt-1">
+                            {errors.rollNo.message}
+                          </p>
+                        )}
+                      </div>
+                      <div className="input-group">
+                        <label className="block font-medium text-sm mb-1 ">
+                          acadmic year <span className="text-red-500">*</span>
+                        </label>
+                        <select
+                          {...register("acadmicYear", {
+                            required: "acadmic year is required",
+                          })}
+                          className="w-full  border-gray-300 rounded-md shadow-sm px-4 py-[10px] border focus:ring-blue-500 focus:border-blue-500"
+                        >
+                          <option value="">Select acadmic year</option>
+                          {acadmicYears.map((option, index) => {
+                            return (
+                              <option key={index} value={option}>
+                                {option}
+                              </option>
+                            );
+                          })}
+                        </select>
+                        {errors.acadmicYear && (
+                          <p className="text-sm text-red-500 mt-1">
+                            {errors.acadmicYear.message}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="w-fit mx-auto flex flex-wrap justify-center gap-2">
+                      <div className="input-group">
+                        <label className="block font-medium text-sm mb-1">
+                          Semister <span className="text-red-500">*</span>
+                        </label>
+                        <select
+                          {...register("semister", {
+                            required: "Semister is required",
+                          })}
+                          className="w-full border-gray-300 rounded-md shadow-sm px-4 py-[10px] border focus:ring-blue-500 focus:border-blue-500"
+                        >
+                          <option value="">Select Semister</option>
+                          {semisters.map((option, index) => {
+                            return (
+                              <option key={index} value={option}>
+                                {option}
+                              </option>
+                            );
+                          })}
+                        </select>
+                        {errors.semister && (
+                          <p className="text-sm text-red-500 mt-1">
+                            {errors.semister.message}
+                          </p>
+                        )}
+                      </div>
+                      <div className="input-group">
+                        <label className="block font-medium text-sm mb-1">
+                          Gender <span className="text-red-500">*</span>
+                        </label>
+                        <select
+                          {...register("gender", {
+                            required: "Gender is required",
+                          })}
+                          className="w-full border-gray-300 rounded-md shadow-sm px-4 py-[10px] border focus:ring-blue-500 focus:border-blue-500"
+                        >
+                          <option value="">Select Gender</option>
+                          {["male", "female", "other"].map((option, index) => {
+                            return (
+                              <option key={index} value={option}>
+                                {option}
+                              </option>
+                            );
+                          })}
+                        </select>
+                        {errors.gender && (
+                          <p className="text-sm text-red-500 mt-1">
+                            {errors.gender.message}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="w-fit mx-auto flex flex-wrap justify-center gap-2">
+                      <div className="input-group">
+                        <label className="block font-medium text-sm mb-1">
+                          Section <span className="text-red-500">*</span>
+                        </label>
+                        <select
+                          {...register("section", {
+                            required: "Section is required",
+                          })}
+                          onChange={e => {
+                            const batch = [];
+                            for (let i = 1; i <= 5; i++) {
+                              batch.push(`${e.target.value}${i}`);
+                            }
+                            console.log(batch);
+                      
+                            setBatches(batch);
+                           }}
+                          className="w-full border-gray-300 rounded-md shadow-sm px-4 py-[10px] border focus:ring-blue-500 focus:border-blue-500"
+                        >
+                          <option value="">Select Section</option>
+                          {sections.map((option, index) => {
+                            return (
+                              <option key={index} value={option}>
+                                {option}
+                              </option>
+                            );
+                          })}
+                        </select>
+                        {errors.section && (
+                          <p className="text-sm text-red-500 mt-1">
+                            {errors.section.message}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="input-group">
+                        <label className="block text-sm font-medium mb-1">
+                          Batch <span className="text-red-500">*</span>                        
+                        </label>
+                        <select
+                          {...register("batch", {
+                            required: "batch is required",
+                          })}                          
+                          className="w-full border-gray-300 rounded-md shadow-sm px-4 py-[10px] border focus:ring-blue-500 focus:border-blue-500"
+                        >
+                          <option value="">Select Section</option>
+                          {batches.map((option, index) => {
+                            return (
+                              <option key={index} value={option}>
+                                {option}
+                              </option>
+                            );
+                          })}
+                        </select>
+                        {errors.batch && (
+                          <p className="text-sm text-red-500 mt-1">
+                            {errors.batch.message}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </>
+              {isRegister && userType === "student" && (
+                <div className=" w-full max-w-[30.5rem] mx-auto">
+                  <label className="block font-medium text-sm mb-1">
+                    Branch <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    {...register("branch", {
+                      required: "Branch is required",
+                    })}
+                    className="w-full border-gray-300 rounded-md shadow-sm px-4 py-[10px] border focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="">Select Branch</option>
+                    {engineeringBranches.map((option, index) => {
+                      return (
+                        <option key={index} value={option}>
+                          {option}
+                        </option>
+                      );
+                    })}
+                  </select>
+                  {errors.branch && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {errors.branch.message}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {isRegister && userType === "admin" && (
+                <div className="w-fit mx-auto flex flex-wrap justify-center gap-2">
+                  <div className="input-group">
+                    <label className="block text-sm font-medium mb-1">
+                      Latitude Of Institute{" "}
+                      <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      {...register("latitude", {
+                        required: "Latitude Of Institute is required",
+                      })}
+                      className="w-full border-gray-300 px-4 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    />
+                    {errors.latitude && (
+                      <p className="text-sm text-red-500 mt-1">
+                        {errors.latitude.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="input-group">
+                    <label className="block text-sm font-medium mb-1">
+                      Longitude Of Institute{" "}
+                      <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      {...register("longitude", {
+                        required: "Longitude Of Institute is required",
+                      })}
+                      className="w-full border-gray-300 rounded-md shadow-sm px-4 py-2 border focus:ring-blue-500 focus:border-blue-500"
+                    />
+                    {errors.longitude && (
+                      <p className="text-sm text-red-500 mt-1">
+                        {errors.longitude.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              <div className="w-fit mx-auto flex flex-wrap justify-center gap-2">
+                <div className="input-group">
+                  <label className="block text-sm font-medium mb-1">
+                    Password <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    {...register("password", {
+                      required: "Password is required",
+                      minLength: [6, "password should have mininum 6 length"],
+                      maxLength: [12, "password should have maximum 12 length"],
+                    })}
+                    className="w-full border-gray-300 px-4 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                  />
+                  {errors.password && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {errors.password.message}
+                    </p>
+                  )}
+                </div>
+
+                {isRegister && (
+                  <div className="input-group">
+                    <label className="block text-sm font-medium mb-1">
+                      Confirm Password <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      {...register("confirmPassword", {
+                        required: "Confirm Password is required",
+                        validate: value =>
+                          value === getValues("password") ||
+                          "Passwords does not match",
+                      })}
+                      className="w-full border-gray-300 rounded-md shadow-sm px-4 py-2 border focus:ring-blue-500 focus:border-blue-500"
+                    />
+                    {errors.confirmPassword && (
+                      <p className="text-sm text-red-500 mt-1">
+                        {errors.confirmPassword.message}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+              <div className="w-fit mx-auto flex flex-wrap justify-center gap-2">
+                <div className="input-group flex">
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className=" mx-auto bg-blue-600 outline-none my-4 w-[10rem] text-white py-2 px-4 rounded-md hover:bg-blue-700 "
+                  >
+                    {isRegister ? "Register" : "Login"}
+                  </button>
+                </div>
+              </div>
             </div>
-            <button
-              type="submit"
-              
-              className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            >
-              Login
-            </button>
           </form>
+          <p className="text-sm text-center mt-4">
+            {isRegister ? "Already have an account?" : "Don't have an account?"}{" "}
+            <button
+              type="button"
+              onClick={e => {
+                if (e.target.innerText === "Login") {
+                  setIsRegister(false);
+                  setIsLogin(true);
+                } else if (e.target.innerText === "Register") {
+                  setIsRegister(true);
+                  setIsLogin(true);
+                }
+              }}
+              className="text-blue-600  hover:underline"
+            >
+              {isRegister ? "Login" : "Register"}
+            </button>
+          </p>
         </div>
       </div>
     </>
   );
 };
 
-export default login;
+export default AuthPage;

@@ -1,24 +1,25 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import { SignJWT } from 'jose/jwt/sign';
 
-const studentSchema = mongoose.Schema(
+const teacherSchema = new mongoose.Schema(
   {
-    firstName:{
-        type: String,
-        required: true,
+    firstName: {
+      type: String,
+      required: true,
     },
-    lastName:{
-        type: String,
-        required: true,
+    lastName: {
+      type: String,
+      required: true,
     },
-    studentId : {
+    teacherId: {
       type: String,
       required: true,
       unique: true,
       trim: true,
       index: true,
-    },email: {
+    },
+    email: {
       type: String,
       unique: true,
       default: null,
@@ -26,53 +27,26 @@ const studentSchema = mongoose.Schema(
     phone: {
       type: String,
       unique: true,
-      required: true
-    },
-    userType: {
-      type: String,
-      default: "student",
-    },
-    rollNo: {
-      type: Number,
       default: null,
-    },
-    acadmicYear: {
-      type: String,
-      default: null,
-      enum: ['1st', '2nd', '3rd', '4th'],
-    },
-    semister:{
-        type: String,
-        default:null,
-        enum: ['1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th'],
-    },
-    gender: {
-      type: String,
-      default:null,
-      enum : ["male","female","other"]
-    },
-    branch: {
-      type: String,
-      default:null
-    },
-    section: {
-      type: String,
-      default:null
-    },
-    batch: {
-      type: String,
-      default:null
     },
     password: {
       type: String,
       required: true,
       unique: true,
     },
-    
+    userType: {
+      type: String,
+      default: "teacher",
+    },
+    refreshToken: {
+      type: String,
+    },
   },
   { timestamps : {createdAt: "registeredOn", updatedAt: "updatedOn"} }
 );
-studentSchema.pre("save", async function (next) {
+
+
+teacherSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
 
   // Generate a salt
@@ -83,17 +57,18 @@ studentSchema.pre("save", async function (next) {
   next();
 });
 
-studentSchema.methods.matchPassword = async function (password) {
+teacherSchema.methods.matchPassword = async function (password) {
   // Compare the provided password with the stored hash
   return await bcrypt.compare(password, this.password);
 };
 
 
-studentSchema.methods.generateAccessToken = async function () {
+teacherSchema.methods.generateAccessToken = async function () {
   const token = await new SignJWT({
-    studentId: this.studentId,
+    teacherId: this.teacherId,
     email: this.email,
     phone: this.phone,
+    name: this.name,
     userType: this.userType,
   })
     .setProtectedHeader({ alg: "HS256" })
@@ -104,8 +79,8 @@ studentSchema.methods.generateAccessToken = async function () {
   return token;
 };
 
-studentSchema.methods.generateRefreshToken = async function () {
-  const token = await new SignJWT({ studentId: this.studentId })
+teacherSchema.methods.generateRefreshToken = async function () {
+  const token = await new SignJWT({ teacherId: this.teacherId })
           .setProtectedHeader({ alg: "HS256" })
           .setIssuedAt()
           .setExpirationTime(process.env.REFRESH_TOKEN_EXPIRE)
@@ -114,6 +89,7 @@ studentSchema.methods.generateRefreshToken = async function () {
 
   return token;
 };
- const Student = mongoose.models.Student || mongoose.model('Student', studentSchema);
 
-export default Student;
+const Teacher = mongoose.models.Teacher || mongoose.model("Teacher", teacherSchema);
+
+export default Teacher;

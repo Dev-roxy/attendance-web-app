@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import { asyncHandler } from "../utils/asyncHandler";
 import { ApiError } from "next/dist/server/api-utils";
 import { ApiResponse } from "../utils/ApiResponse";
-import  User  from "../models/user.model";
+import  User  from "../models/teacher.model";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import {connectDB} from "@/connections/index";

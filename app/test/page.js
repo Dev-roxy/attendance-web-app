@@ -1,54 +1,37 @@
-"use client";
-import React, { useState, useEffect } from "react";
 
-const page = ({ message, success = true }) => {
-  success = true;
-  const [isSuccess, setIsSuccess] = useState("");
-  const [dynamicWidth, setDynamicWidth] = useState(100);
-  const [shouldHide, setShouldHide] = useState(false);
+import React from "react";
+import { useForm } from "react-hook-form";
+import { connectDB } from "@/connections";
+import Admin from "@/models/admin.model";
 
-  useEffect(() => {
-    if (success) {
-      setIsSuccess('bg-green-400');
-    } else {
-      setIsSuccess('bg-red-400');
-    }
-  }, []);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setDynamicWidth((prevWidth) => {
-        if (prevWidth <= 0) {
-          setShouldHide(true);
-          clearInterval(interval);
-          return 0;
-        }
-        return prevWidth - 2;
-      });
-    }, 100);
+const loadMenu = () => {
 
-    return () => clearInterval(interval); // Clear interval on component unmount
-  }, []);
 
+  const data = {
+    "adminId": "24BTIT1019",
+    "email": "rg5394461@gmail.com",
+    "firstName": "Rohit",
+    "institute": "PRMITR",
+    "lastName": "Gupta",
+    "password": "dev@123",
+    "phone": "8007977850"
+  }
+  const onSubmit = async () => {
+    "use server"
+    connectDB()
+    let user = await Admin.create(data);
+    user.save({timestamps: true});
+  }
+  
   return (
-    <>
-    <div className="flex justify-center items-center h-screen bg-gray-200">
-     
-      <div
-        className={`flash-card h-[80px] w-80 shadow-md bg-white rounded-md py-4 font-poppins `}
-        style={{display:`${shouldHide ? 'none' : 'block'}`}}
-      >
-        <div className=" w-60 mx-auto">this is a temporary message</div>
-        <div className={`h-2 w-60 mx-auto mt-2`}>
-          <div
-            className={` progress-bar h-2 transition-all ease p-2 rounded-full ${isSuccess}`}
-            style={{ width: `${dynamicWidth}%` }}
-          ></div>
-        </div>
-      </div>
+    <div className="h-screen w-screen flex justify-center items-center">
+      
+      <button type="button " onClick={onSubmit} className="bg-purple-500 p-4 m-auto rounded-lg shadow-md" >Submit</button>
+
+
     </div>
-    </>
   );
 };
 
-export default page;
+export default loadMenu;
