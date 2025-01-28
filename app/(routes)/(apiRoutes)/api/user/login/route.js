@@ -45,13 +45,31 @@ export async function POST(req) {
           email: userData.email,
           userType: "teacher",
         });
-        if (user) {
-          return NextResponse.json({
-            message: "Your account is not approved yet ,Contact Admin",
-            status: 401,
-            success: false,
-          });
-        }
+        if (user){
+          if(user.rejected){
+            if (user.timesRejected > 2){
+              return NextResponse.json({
+                message: "Your account is rejected 3 times ,You can't re-apply",
+                status: 401,
+                success: false,
+                rejected: true
+              });
+            }else if (0 < user.timesRejected < 3) {
+              return NextResponse.json({
+                message: "Your account is rejected ,You can re-apply",
+                status: 401,
+                success: false,
+                rejected: true
+              });
+              }
+            }else {
+              return NextResponse.json({
+                message: "Your account is not approved yet ,Contact Admin",
+                status: 401,
+                success: false,
+                });
+              }
+          }
       }
     }
     if (!user) {

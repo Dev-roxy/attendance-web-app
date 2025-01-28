@@ -15,7 +15,6 @@ const approvalSchema = new mongoose.Schema(
         required: true,
         unique: true,
         trim: true,
-        lowercase: true,
         index: true,
       },
       email: {
@@ -26,7 +25,7 @@ const approvalSchema = new mongoose.Schema(
       phone: {
         type: String,
         unique: true,
-        required: true
+        default: null,
       },
       password: {
         type: String,
@@ -40,9 +39,15 @@ const approvalSchema = new mongoose.Schema(
       approved: {
         type: Boolean,
         default: false,
-      },  
+      },
+      rejected: {
+        type: Boolean,
+      },
+      timesRejected: {
+        type: Number,
+      },
     },
-    { timestamps: true }
+    { timestamps : {createdAt: "approvalRequestedOn", updatedAt: false}}
   );
 
 const Approval = mongoose.models.Approval || mongoose.model("Approval", approvalSchema);

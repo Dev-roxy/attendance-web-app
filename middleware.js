@@ -19,10 +19,10 @@ export async function middleware(request) {
   const token = request.cookies.get('accessToken') || request.headers.get('Authorization')?.split(' ')[1];
   
   if (!token) {
-    if (request.nextUrl.pathname == '/login'){
+    if (request.nextUrl.pathname == '/auth'){
       return NextResponse.next()
     }else{
-      return NextResponse.redirect(new URL('/login', request.url));
+      return NextResponse.redirect(new URL('/auth', request.url));
     }
   }
   const accessToken = token.value
@@ -31,7 +31,7 @@ export async function middleware(request) {
     const { payload } = await jwtVerify(accessToken, new TextEncoder().encode(process.env.ACCESS_TOKEN_SECRET));
     const response = NextResponse.next();
     response.cookies.set('user', JSON.stringify(payload), cookiesOptions);
-    console.log(payload);
+   
     
     if (request.nextUrl.pathname.startsWith(`/${payload.userType}`)) {
       return response;
@@ -61,10 +61,10 @@ export async function middleware(request) {
       }
     }
     if (response.status === 401) {
-      if (request.nextUrl.pathname == '/login'){
+      if (request.nextUrl.pathname == '/auth'){
         return NextResponse.next()
       }else{
-        return NextResponse.redirect(new URL('/login', request.url));
+        return NextResponse.redirect(new URL('/auth', request.url));
       }
     }
   }
@@ -76,7 +76,7 @@ export async function middleware(request) {
 
 export const config={
 
-    matcher: ['/student/:path*', '/admin/:path*', '/teacher/:path*','/:any*' ], // Match all routes under /dashboard and other protected routes
+    matcher: ['/student/:path*', '/admin/:path*', '/teacher/:path*'], // Match all routes under /dashboard and other protected routes
  
 }
 

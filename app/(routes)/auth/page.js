@@ -1,12 +1,11 @@
 "use client";
-import { useState ,useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import FlashMessage from "@/components/client/flashMessage";
 import bgImage from "@/app/assets/background.jpg";
 
 const AuthPage = () => {
-  
   const sections = ["A", "B", "C", "D"];
   const acadmicYears = ["1st", "2nd", "3rd", "4th"];
   const semisters = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th"];
@@ -40,7 +39,7 @@ const AuthPage = () => {
 
   const router = useRouter();
 
-  const [batches, setBatches] = useState([])
+  const [batches, setBatches] = useState([]);
   const [section, setSection] = useState("");
   const [Message, setMessage] = useState("");
   const [Success, setSuccess] = useState(false);
@@ -48,6 +47,8 @@ const AuthPage = () => {
   // const [isInstituteRegister, setIsInstituteRegister] = useState(false);
   const [userType, setUserType] = useState("student");
   const [isLogin, setIsLogin] = useState(true);
+  const [reapply, setReapply] = useState(false)
+
   const {
     register,
     handleSubmit,
@@ -56,10 +57,9 @@ const AuthPage = () => {
   } = useForm({});
 
 
-  let require = !isRegister ? { required: "Email is required" } : "";
-
   const onSubmit = async data => {
     const loginAs = data.userType;
+
     let success = false;
     if (!isRegister) {
       const requestUrl = `/api/user/login`;
@@ -80,40 +80,64 @@ const AuthPage = () => {
         }
 
         if (success) {
-            if (loginAs === "teacher") {
-              router.push("/student/dashboard");
-            } else if (loginAs === "admin") {
-              router.push("/admin/dashboard");
-            } else if (loginAs === "student") {
-              router.push("/student/dashboard");
-            }
+          if (loginAs === "teacher") {
+            router.push("/student/dashboard");
+          } else if (loginAs === "admin") {
+            router.push("/admin/dashboard");
+          } else if (loginAs === "student") {
+            router.push("/student/dashboard");
+          }
         }
       });
     } else if (isRegister) {
-      delete data.teacherId;
-      delete data.confirmPassword;
-      console.log(data);
-      const requestUrl = `/api/user/register`;
-      const response = await fetch(requestUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      }).then(async res => {
-        try {
-          let data = await res.json();
-          setMessage(data.message);
-          setSuccess(data.success);
-          success = data.success;
-        } catch (err) {
-          console.log(err.message);
-        }
+      if (reapply) {
+        delete data.confirmPassword;
+        const requestUrl = `/api/teacher/reapply`;
+        const response = await fetch(requestUrl, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }).then(async res => {
+          try {
+            let data = await res.json();
+            setMessage(data.message);
+            setSuccess(data.success);
+            success = data.success;
+          } catch (err) {
+            console.log(err.message);
+          }
 
-        if (success) {
+          if (success) {
             setIsRegister(false);
-        }
-      });
+          }
+        });
+      } else {
+        delete data.confirmPassword;
+        const requestUrl = `/api/user/register`;
+        const response = await fetch(requestUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }).then(async res => {
+          try {
+            let data = await res.json();
+            setMessage(data.message);
+            setSuccess(data.success);
+            success = data.success;
+          } catch (err) {
+            console.log(err.message);
+          }
+
+          if (success) {
+            setIsRegister(false);
+          }
+        });
+      }
+
     }
   };
 
@@ -133,7 +157,7 @@ const AuthPage = () => {
           className={`w-fit max-w-[90%] p-8 bg-white bg-opacity-70 backdrop-blur-sm shadow-lg  rounded-lg`}
         >
           <h2 className="text-2xl font-bold text-center mb-6">
-            {isRegister ? "Register" : isLogin ? "Login" : "Register Institute"}
+            {isRegister ? reapply ? "Re-apply" : "Register" : isLogin ? "Login" : "Register Institute"}
           </h2>
 
           <form
@@ -148,12 +172,14 @@ const AuthPage = () => {
                 {...register("userType", {
                   required: "User Type is required",
                 })}
-                onChange={e => setUserType(e.target.value)}
+                onChange={e => {
+                  setUserType(e.target.value);
+                }}
                 className="w-full  border-gray-300 rounded-md shadow-sm px-4 py-2 border focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="student">Student</option>
                 <option value="teacher">Teacher</option>
-                {!isRegister  && <option value="admin">Admin</option>}
+                {!isRegister && <option value="admin">Admin</option>}
               </select>
               {errors.userType && (
                 <p className="text-sm text-red-500 mt-1">
@@ -227,7 +253,7 @@ const AuthPage = () => {
                     </label>
                     <input
                       type="text"
-                      {...register("phoneNo", {
+                      {...register("phone", {
                         maxLength: {
                           value: 10,
                           message: "Phone number should be 10 digits",
@@ -240,9 +266,9 @@ const AuthPage = () => {
                       })}
                       className="w-full border-gray-300 rounded-md shadow-sm px-4 py-2 border focus:ring-blue-500 focus:border-blue-500"
                     />
-                    {errors.phoneNo && (
+                    {errors.phone && (
                       <p className="text-sm text-red-500 mt-1">
-                        {errors.phoneNo.message}
+                        {errors.phone.message}
                       </p>
                     )}
                   </div>
@@ -250,21 +276,40 @@ const AuthPage = () => {
               </div>
 
               <div className="w-fit mx-auto flex flex-wrap justify-center gap-2">
-                {isRegister && userType && (
+                {isRegister && userType === "student" && (
                   <div className="input-group">
                     <label className="block text-sm font-medium mb-1">
-                      {userType} Id <span className="text-red-500">*</span>
+                      student Id <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
-                      {...register(`${userType}Id`, {
-                        required: `${userType} Id is required`,
+                      {...register(`studentId`, {
+                        required: `studentId Id is required`,
                       })}
                       className="w-full border-gray-300 rounded-md shadow-sm px-4 py-2 border focus:ring-blue-500 focus:border-blue-500"
                     />
-                    {errors.userId && (
+                    {errors.studentId && (
                       <p className="text-sm text-red-500 mt-1">
-                        {errors.userId.message}
+                        {errors.studentId.message}
+                      </p>
+                    )}
+                  </div>
+                )}
+                {isRegister && userType === "teacher" && (
+                  <div className="input-group">
+                    <label className="block text-sm font-medium mb-1">
+                      teacher Id <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      {...register(`teacherId`, {
+                        required: `teacherId Id is required`,
+                      })}
+                      className="w-full border-gray-300 rounded-md shadow-sm px-4 py-2 border focus:ring-blue-500 focus:border-blue-500"
+                    />
+                    {errors.teacherId && (
+                      <p className="text-sm text-red-500 mt-1">
+                        {errors.teacherId.message}
                       </p>
                     )}
                   </div>
@@ -403,9 +448,9 @@ const AuthPage = () => {
                               batch.push(`${e.target.value}${i}`);
                             }
                             console.log(batch);
-                      
+
                             setBatches(batch);
-                           }}
+                          }}
                           className="w-full border-gray-300 rounded-md shadow-sm px-4 py-[10px] border focus:ring-blue-500 focus:border-blue-500"
                         >
                           <option value="">Select Section</option>
@@ -426,12 +471,12 @@ const AuthPage = () => {
 
                       <div className="input-group">
                         <label className="block text-sm font-medium mb-1">
-                          Batch <span className="text-red-500">*</span>                        
+                          Batch <span className="text-red-500">*</span>
                         </label>
                         <select
                           {...register("batch", {
                             required: "batch is required",
-                          })}                          
+                          })}
                           className="w-full border-gray-300 rounded-md shadow-sm px-4 py-[10px] border focus:ring-blue-500 focus:border-blue-500"
                         >
                           <option value="">Select Section</option>
@@ -481,46 +526,7 @@ const AuthPage = () => {
                 </div>
               )}
 
-              {isRegister && userType === "admin" && (
-                <div className="w-fit mx-auto flex flex-wrap justify-center gap-2">
-                  <div className="input-group">
-                    <label className="block text-sm font-medium mb-1">
-                      Latitude Of Institute{" "}
-                      <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      {...register("latitude", {
-                        required: "Latitude Of Institute is required",
-                      })}
-                      className="w-full border-gray-300 px-4 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                    />
-                    {errors.latitude && (
-                      <p className="text-sm text-red-500 mt-1">
-                        {errors.latitude.message}
-                      </p>
-                    )}
-                  </div>
-                  <div className="input-group">
-                    <label className="block text-sm font-medium mb-1">
-                      Longitude Of Institute{" "}
-                      <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      {...register("longitude", {
-                        required: "Longitude Of Institute is required",
-                      })}
-                      className="w-full border-gray-300 rounded-md shadow-sm px-4 py-2 border focus:ring-blue-500 focus:border-blue-500"
-                    />
-                    {errors.longitude && (
-                      <p className="text-sm text-red-500 mt-1">
-                        {errors.longitude.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              )}
+
 
               <div className="w-fit mx-auto flex flex-wrap justify-center gap-2">
                 <div className="input-group">
@@ -528,7 +534,7 @@ const AuthPage = () => {
                     Password <span className="text-red-500">*</span>
                   </label>
                   <input
-                    type="text"
+                    type="password"
                     {...register("password", {
                       required: "Password is required",
                       minLength: [6, "password should have mininum 6 length"],
@@ -549,7 +555,7 @@ const AuthPage = () => {
                       Confirm Password <span className="text-red-500">*</span>
                     </label>
                     <input
-                      type="text"
+                      type="password"
                       {...register("confirmPassword", {
                         required: "Confirm Password is required",
                         validate: value =>
@@ -573,23 +579,60 @@ const AuthPage = () => {
                     disabled={isSubmitting}
                     className=" mx-auto bg-blue-600 outline-none my-4 w-[10rem] text-white py-2 px-4 rounded-md hover:bg-blue-700 "
                   >
-                    {isRegister ? "Register" : "Login"}
+                    {isRegister ? reapply ? "Reapply" : "Register" : "Login"}
                   </button>
                 </div>
               </div>
             </div>
           </form>
+          {
+            isRegister && userType === 'teacher' && !reapply && (
+              <p className="text-sm text-center mt-4">
+                Your register application is rejected?{" "}
+                <button
+                  type="button"
+                  onClick={e => {
+                    setReapply(true)
+                  }}
+                  className="text-blue-600  hover:underline"
+                >
+                  Re-apply
+                </button>
+              </p>
+            )
+          }
+          {
+            isRegister && userType === 'teacher' && reapply && (
+              <p className="text-sm text-center mt-4">
+                Don't want to re-apply?{" "}
+                <button
+                  type="button"
+                  onClick={e => {
+                    setReapply(false)
+                  }}
+                  className="text-blue-600  hover:underline"
+                >
+                  Back to Register 
+                </button>
+              </p>
+            )
+          }
           <p className="text-sm text-center mt-4">
             {isRegister ? "Already have an account?" : "Don't have an account?"}{" "}
             <button
               type="button"
               onClick={e => {
+                if (userType === 'admin') {
+                  setUserType('student')
+                }
                 if (e.target.innerText === "Login") {
                   setIsRegister(false);
                   setIsLogin(true);
+                  setReapply(false)
                 } else if (e.target.innerText === "Register") {
                   setIsRegister(true);
                   setIsLogin(true);
+                  setReapply(false)
                 }
               }}
               className="text-blue-600  hover:underline"
@@ -597,6 +640,7 @@ const AuthPage = () => {
               {isRegister ? "Login" : "Register"}
             </button>
           </p>
+
         </div>
       </div>
     </>

@@ -1,6 +1,6 @@
 import React from 'react'
 
-const loader = () => {
+const loading = () => {
   return (
     <>
       <div className='h-screen bg-white dark:bg-black w-screen flex justify-center items-center'>
@@ -12,4 +12,4 @@ const loader = () => {
   )
 }
 
-export default loader
+export default loading

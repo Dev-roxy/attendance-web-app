@@ -41,6 +41,19 @@ const teacherSchema = new mongoose.Schema(
     refreshToken: {
       type: String,
     },
+    approvedOn : {
+      type: Date,
+      required :true
+    },
+    approved: {
+      type: Boolean,
+      default: false,
+    },
+    approvalRequestedOn : {
+      type: Date,
+      required :true
+    },
+
   },
   { timestamps : {createdAt: "registeredOn", updatedAt: "updatedOn"} }
 );

@@ -16,6 +16,7 @@ const cookiesOptions = {
   export async function POST(req) {
     try {
       const userData = await req.json();
+      console.log(userData);
       const { userType , institute} = userData;
   
       await connectDB();
@@ -49,15 +50,33 @@ const cookiesOptions = {
             email: userData.email,
             userType: "teacher",
           });
-          if (user) {
-            return NextResponse.json({
-              message: "Your account is not approved yet ,Contact Admin",
-              status: 401,
-              success: false,
-            });
+           if (user){
+            if(user.rejected){
+              if (user.timesRejected > 2){
+                return NextResponse.json({
+                  message: "Your account is rejected 3 times ,You can't re-apply",
+                  status: 401,
+                  success: false,
+                  rejected: true
+                });
+              }else if (0 < user.timesRejected < 3) {
+                return NextResponse.json({
+                  message: "Your account is rejected ,You can re-apply",
+                  status: 401,
+                  success: false,
+                  rejected: true
+                });
+                }
+              }else {
+                return NextResponse.json({
+                  message: "Your account is not approved yet ,Contact Admin",
+                  status: 401,
+                  success: false,
+                  });
+                }
+            }
           }
         }
-      }
       if (user) {
         return NextResponse.json({
           message: "user already exists please login",
@@ -90,8 +109,9 @@ const cookiesOptions = {
 
 
     } catch (error) {
+      
       return NextResponse.json({
-        message: "Internal server error",
+        message: error.message,
         status: 500,
         success: false,
       });

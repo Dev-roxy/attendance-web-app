@@ -2,9 +2,9 @@ import React from 'react'
 import Image from 'next/image'
 import userProfile from "@/public/profile.jpg";
 
-const teacherTab = ({name , subject ,email}) => {
+const teacherTab = ({name , subject ,email ,onClick}) => {
   return (
-     <div  className="bg-slate-100 hover:bg-slate-200 flex gap-2 p-2 w-[94%] mx-auto rounded-lg">
+     <div onClick={onClick}  className="bg-slate-100 hover:bg-slate-200 flex gap-2 p-2 w-[94%] mx-auto rounded-lg">
           <div className="image  flex justify-center items-center  rounded-lg">
             <Image src={userProfile} width={50} height={50} alt="teacher" className="rounded-xl" />
           </div>
