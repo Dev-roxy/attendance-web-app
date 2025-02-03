@@ -1,5 +1,5 @@
 import React ,{Suspense} from "react";
-import Table from "@/components/client/Table.layout";
+import Table from "@/components/server/Table.layout";
 import Loading from "@/components/client/loading";
 import LoadMenu from "@/components/client/loadMenu";
 import TeacherRegisterForm from "@/components/client/TeacherRegisterForm";
@@ -8,17 +8,7 @@ import { cookies } from "next/headers";
 import TeacherApproval from "@/components/client/teacherApproval";
 
 const dashboard = async () => {
-  const teachers = [
-    {
-      userId: 1,
-      firstName: "Rohit",
-      lastName: "Gupta",
-      email: "rohit.gupta@gmail.com",
-      department: "IT",
-      subject: "Maths",
-    },
-    
-  ];
+
 
   const userName = "Rohit";
   const userCookie = await cookies();
@@ -33,9 +23,9 @@ const dashboard = async () => {
       </h1>
 
       {/* This is an alert to  */}
-      {/* <div className="alert shadow-md  bg-yellow-200 px-4 font-normal rounded-lg py-2 text-[#3F0071] box-border ">
+      <div className="alert shadow-md  bg-yellow-200 px-4 font-normal rounded-lg py-2 text-[#3F0071] box-border ">
         <span className="">Alert : This is an alert for {userName}</span>
-      </div> */}
+      </div>
 
       {/* This is load menu to load teachers and check then */}
       {/* <LoadMenu />

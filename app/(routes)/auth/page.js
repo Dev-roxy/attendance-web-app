@@ -10,31 +10,11 @@ const AuthPage = () => {
   const acadmicYears = ["1st", "2nd", "3rd", "4th"];
   const semisters = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th"];
   const engineeringBranches = [
-    "Aerospace Engineering",
-    "Agricultural Engineering",
-    "Automobile Engineering",
-    "Biomedical Engineering",
-    "Biotechnology Engineering",
-    "Chemical Engineering",
     "Civil Engineering",
     "Computer Science Engineering",
     "Electrical Engineering",
     "Electronics and Communication Engineering",
-    "Environmental Engineering",
-    "Industrial Engineering",
     "Information Technology",
-    "Instrumentation Engineering",
-    "Marine Engineering",
-    "Mechanical Engineering",
-    "Metallurgical Engineering",
-    "Mining Engineering",
-    "Petroleum Engineering",
-    "Production Engineering",
-    "Robotics Engineering",
-    "Software Engineering",
-    "Structural Engineering",
-    "Telecommunication Engineering",
-    "Textile Engineering",
   ];
 
   const router = useRouter();
@@ -54,10 +34,11 @@ const AuthPage = () => {
     handleSubmit,
     getValues,
     formState: { errors, isSubmitting },
-  } = useForm({});
+  } = useForm();
 
 
   const onSubmit = async data => {
+    
     const loginAs = data.userType;
 
     let success = false;
@@ -276,40 +257,21 @@ const AuthPage = () => {
               </div>
 
               <div className="w-fit mx-auto flex flex-wrap justify-center gap-2">
-                {isRegister && userType === "student" && (
+                {isRegister && (
                   <div className="input-group">
                     <label className="block text-sm font-medium mb-1">
-                      student Id <span className="text-red-500">*</span>
+                      Enrollment No. <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
-                      {...register(`studentId`, {
-                        required: `studentId Id is required`,
+                      {...register(`enrollment_no`, {
+                        required: `enrollment_no Id is required`,
                       })}
                       className="w-full border-gray-300 rounded-md shadow-sm px-4 py-2 border focus:ring-blue-500 focus:border-blue-500"
                     />
-                    {errors.studentId && (
+                    {errors.enrollment_no && (
                       <p className="text-sm text-red-500 mt-1">
-                        {errors.studentId.message}
-                      </p>
-                    )}
-                  </div>
-                )}
-                {isRegister && userType === "teacher" && (
-                  <div className="input-group">
-                    <label className="block text-sm font-medium mb-1">
-                      teacher Id <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      {...register(`teacherId`, {
-                        required: `teacherId Id is required`,
-                      })}
-                      className="w-full border-gray-300 rounded-md shadow-sm px-4 py-2 border focus:ring-blue-500 focus:border-blue-500"
-                    />
-                    {errors.teacherId && (
-                      <p className="text-sm text-red-500 mt-1">
-                        {errors.teacherId.message}
+                        {errors.enrollment_no.message}
                       </p>
                     )}
                   </div>

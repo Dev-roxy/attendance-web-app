@@ -54,11 +54,11 @@ const TeacherApproval = () => {
 
 
     setApprovals([])
-    const { teacherId } = approvalData;
+    const { enrollment_no } = approvalData;
     const response = fetch("/api/teacher/approve", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ teacherId, action: true }),
+      body: JSON.stringify({ enrollment_no, action: true }),
     })
     if (response.success) {
       const { message } = await response.json();
@@ -72,11 +72,11 @@ const TeacherApproval = () => {
 
   const handleReject = async () => {
     setApprovals([])
-    const { teacherId } = approvalData;
+    const { enrollment_no } = approvalData;
     const response = fetch("/api/teacher/reject", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ teacherId, action: false }),
+      body: JSON.stringify({ enrollment_no, action: false }),
     })
     if (response.success) {
       const { message } = await response.json();
@@ -91,7 +91,7 @@ const TeacherApproval = () => {
   const renderPopup = () => {
     if (!approvalData) return null;
 
-    const { firstName, lastName, email, phone, teacherId } = approvalData;
+    const { firstName, lastName, email, phone, enrollment_no } = approvalData;
 
     return (
       <div className="fixed inset-0  flex items-center justify-center  bg-slate-300 bg-opacity-60 backdrop-blur-sm z-10 mx-0">
@@ -114,7 +114,7 @@ const TeacherApproval = () => {
             />
             <div className="details text-[14px]  text-gray-700">
               <div className="flex justify-start items-center gap-1 " ><span className="text-slate-400">Name:</span> {`${firstName} ${lastName}`}</div>
-              <div className="flex justify-start items-center gap-1 " ><span className="text-slate-400">Teacher ID:</span> {teacherId}</div>
+              <div className="flex justify-start items-center gap-1 " ><span className="text-slate-400">Enrollment:</span> {enrollment_no}</div>
               <div className="flex justify-start items-center gap-1 " ><span className="text-slate-400 ">Email:</span> {email}</div>
               <div className="flex justify-start items-center gap-1 " ><span className="text-slate-400">Phone:</span> {phone}</div>
             </div>
@@ -175,7 +175,7 @@ const TeacherApproval = () => {
           ))}
         </Suspense>
         {!approvals.length && !isLoading && (
-          <div className="text-center text-gray-500">No approvals found</div>
+          <div className="text-center text-gray-500 my-4">No approvals found</div>
         )}
       </section>
 

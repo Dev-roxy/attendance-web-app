@@ -22,7 +22,7 @@ export async function PATCH(request) {
         }
         if (checkRejected.timesRejected > 2) {
             return NextResponse.json({
-                message: "Your account is rejected 3 times ,You can't re-apply",
+                message: "Your account is rate limited, please contact admin",
                 status: 401,
                 success: false,
                 rejected: true

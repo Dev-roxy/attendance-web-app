@@ -1,19 +1,19 @@
 import mongoose from 'mongoose';
+import { generateSessionId } from '@/utils/functions';
 
 const sessionSchema = new mongoose.Schema({
   sessionId: {
     type: String,
     required: true,
-    unique: true, // Ensure session ID is unique
+    unique: true, 
+  },
+  sessionCode: {
+    type: String,
+    required: true,
     maxlength: 5,
     minlength: 5,
   },
-  teacherId: {
-    type: String,
-    required: true,
-    index: true, // Helps with faster queries by teacher ID
-  },
-  teacherLocation: {
+  teacher: {
     latitude: {
       type: Number,
       required: true,
@@ -22,20 +22,17 @@ const sessionSchema = new mongoose.Schema({
       type: Number,
       required: true,
     },
-  },
-  startTime: {
-    type: Date,
-    required: true,
-    default: Date.now,
-  },
-  endTime: {
-    type: Date,
+    enrollment_no: {
+      type: String,
+      required: true,
+    }
   },
   isActive: {
     type: Boolean,
     default: true, // Indicates if the session is still open
   },
-}, { timestamps: true }); // Adds createdAt and updatedAt fields automatically
+}, { timestamps: {createdAt:"startedAt",updatedAt:"endedAt"} }); // Adds createdAt and updatedAt fields automatically
+
 
 const Session = mongoose.models.Session || mongoose.model('Session', sessionSchema);
 

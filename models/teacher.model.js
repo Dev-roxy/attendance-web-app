@@ -12,7 +12,7 @@ const teacherSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    teacherId: {
+    enrollment_no: {
       type: String,
       required: true,
       unique: true,
@@ -32,7 +32,6 @@ const teacherSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
-      unique: true,
     },
     userType: {
       type: String,

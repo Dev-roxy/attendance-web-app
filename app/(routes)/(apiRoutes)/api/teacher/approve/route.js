@@ -7,13 +7,13 @@ export async function POST(Request) {
   try {
     await connectDB();
 
-    const { teacherId, action } = await Request.json();
+    const { enrollment_no, action } = await Request.json();
 
-    console.log({ teacherId, approved: false, userType: "teacher" });
+    console.log({ enrollment_no, approved: false, userType: "teacher" });
 
     // Find and delete the teacher from the Approval collection
     const teacher = await Approval.findOneAndDelete({
-      teacherId,
+      enrollment_no,
       approved: false,
       userType: "teacher",
     });
@@ -45,7 +45,7 @@ export async function POST(Request) {
       message: "Teacher approved",
       status: 200,
       success: true,
-      teacherId: teacher.teacherId,
+      enrollment_no: teacher.enrollment_no,
     });
   } catch (error) {
     console.error("Error during teacher approval:", error);

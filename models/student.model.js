@@ -12,7 +12,7 @@ const studentSchema = mongoose.Schema(
         type: String,
         required: true,
     },
-    studentId : {
+    enrollment_no : {
       type: String,
       required: true,
       unique: true,
@@ -66,7 +66,6 @@ const studentSchema = mongoose.Schema(
     password: {
       type: String,
       required: true,
-      unique: true,
     },
     
   },

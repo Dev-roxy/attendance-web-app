@@ -16,70 +16,77 @@ const cookiesOptions = {
 export async function POST(req) {
   try {
     const userData = await req.json();
-    const { userType } = userData;
+    const { userType, email, password } = userData;
 
     await connectDB();
 
     let user;
-    if (userType === "admin") {
-      user = await Admin.findOne({ email: userData.email, userType: "admin" });
-      if(!user){
-        return NextResponse.json({
-          message: "You are not registered as admin",
-          status: 401,
-          success: false,
-        });
-      }
-    } else if (userType === "student") {
-      user = await Student.findOne({
-        email: userData.email,
-        userType: "student",
-      });
-    } else if (userType === "teacher") {
-      user = await Teacher.findOne({
-        email: userData.email,
-        userType: "teacher",
-      });
-      if (!user) {
-        user = await Approval.findOne({
-          email: userData.email,
-          userType: "teacher",
-        });
-        if (user){
-          if(user.rejected){
-            if (user.timesRejected > 2){
-              return NextResponse.json({
-                message: "Your account is rejected 3 times ,You can't re-apply",
-                status: 401,
-                success: false,
-                rejected: true
-              });
-            }else if (0 < user.timesRejected < 3) {
-              return NextResponse.json({
-                message: "Your account is rejected ,You can re-apply",
-                status: 401,
-                success: false,
-                rejected: true
-              });
-              }
-            }else {
-              return NextResponse.json({
-                message: "Your account is not approved yet ,Contact Admin",
-                status: 401,
-                success: false,
+
+    switch (userType) {
+      case "admin":
+        user = await Admin.findOne({ email, userType: "admin" });
+        if (!user) {
+          return NextResponse.json({
+            message: "You are not registered as admin",
+            status: 401,
+            success: false,
+          });
+        }
+        break;
+
+      case "student":
+        user = await Student.findOne({ email, userType: "student" });
+        break;
+
+      case "teacher":
+        user = await Teacher.findOne({ email, userType: "teacher" });
+        if (!user) {
+          user = await Approval.findOne({ email, userType: "teacher" });
+          if (user) {
+            if (user.rejected) {
+              if (user.timesRejected > 2) {
+                return NextResponse.json({
+                  message: "Your account is rejected 3 times, You can't re-apply",
+                  status: 401,
+                  success: false,
+                  rejected: true,
+                });
+              } else {
+                return NextResponse.json({
+                  message: "Your account is rejected, You can re-apply",
+                  status: 401,
+                  success: false,
+                  rejected: true,
                 });
               }
+            } else {
+              return NextResponse.json({
+                message: "Your account is not approved yet, Contact Admin",
+                status: 401,
+                success: false,
+              });
+            }
           }
-      }
+        }
+        break;
+
+      default:
+        return NextResponse.json({
+          message: "Invalid user type",
+          status: 400,
+          success: false,
+        });
     }
+
     if (!user) {
       return NextResponse.json({
         message: "Invalid email or password",
-        status: 401,
+        status: 404,
         success: false,
       });
     }
-    const isMatch = await user.matchPassword(userData.password);
+
+    const isMatch = await user.matchPassword(password);
     if (!isMatch) {
       return NextResponse.json({
         message: "Invalid password",
@@ -87,7 +94,6 @@ export async function POST(req) {
         success: false,
       });
     }
- 
 
     const accessToken = await user.generateAccessToken();
     const refreshToken = await user.generateRefreshToken();
@@ -98,6 +104,7 @@ export async function POST(req) {
         success: false,
       });
     }
+
     const response = NextResponse.json({
       message: "Login successful",
       success: true,
@@ -107,7 +114,6 @@ export async function POST(req) {
     response.cookies.set("refreshToken", refreshToken, cookiesOptions);
     return response;
 
-   
   } catch (error) {
     console.error("Login failed", error);
     return NextResponse.json({

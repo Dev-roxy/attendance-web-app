@@ -23,7 +23,7 @@ const FlashMessage = ({ message, success ,callback}) => {
 
   return (
     <div
-      className={`fixed z-50 top-5 right-5 p-4 rounded-lg shadow-lg text-white 
+      className={`fixed z-50 top-5 right-5 p-4 rounded-lg shadow-lg max-w-[300px] text-white 
         ${success ? 'bg-green-500' : 'bg-red-500'} text-gray-400`}
     >
       <div>{message}</div>
