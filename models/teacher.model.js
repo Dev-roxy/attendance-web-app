@@ -102,6 +102,7 @@ teacherSchema.methods.generateRefreshToken = async function () {
   return token;
 };
 
-const Teacher = mongoose.models.Teacher || mongoose.model("Teacher", teacherSchema);
+const Teacher = mongoose.models.Teacher || mongoose.model("Teacher",teacherSchema);
+
 
 export default Teacher;

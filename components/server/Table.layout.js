@@ -49,7 +49,7 @@ const Table = ({ students, readOnly, defaultAbsentStudent }) => {
                 className="border-b border-gray-200 hover:bg-gray-100"
               >
                 <td className="py-3 px-4 font-semibold text-left">{student.roll}</td>
-                <td className="py-3 px-4 font-semibold text-center">{student.fullName}</td>
+                <td className="py-3 px-4 font-semibold text-center">{student.fullName ? student.fullName : (student.firstName + student.lastName)}</td>
                 <td className="py-3 px-1 text-center">
                   <button
                     type="button"

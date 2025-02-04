@@ -28,7 +28,7 @@ export async function POST(request) {
                 success: false,
             }, { status: 404 });
         }
-        // session.isActive = false;
+        session.isActive = false;
         session.save({ timestamps: { createdAt: false, updatedAt: "endedAt" }, validateBeforeSave: false });
 
         if (!session) {
@@ -55,15 +55,14 @@ export async function POST(request) {
                 return student
             }
         });
-        console.log(presentStudents)
       if (!presentStudents) {
             return NextResponse.json({
                 message: "No student attended the session",
                 success: false,
             }, { status: 400 });
         }
-          // Push students who attended the session to the database
-          await Attendance.create(presentStudents)
+        console.log(presentStudents)
+        console.log(students)
 
         // Remove the session from the tempSessions array and write the updated array to the file
         tempSessions.splice(sessionIndex, 1);
@@ -76,11 +75,11 @@ export async function POST(request) {
         fs.writeFileSync(process.cwd() + "/temp/memory/session/attendance.json", JSON.stringify(tempAttendance), "utf-8");
 
         // Return success message and status code 200 
-        console.log(students)
+       
         return NextResponse.json({
             message: "Session ended successfully",
             success: true,
-            students : students
+            students : presentStudents
         }, { status: 200 });
 
 

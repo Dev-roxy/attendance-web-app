@@ -53,12 +53,12 @@ export async function POST(req) {
                     let students; 
                     if (acadmicYear && branch && section && batch) {
                         students = await Student.find({acadmicYear,branch,section,batch})
-                        .select("enrollment_no")
+                        .select("enrollment_no firstName lastName rollNo")  
                         .lean()
                         .exec()
                     } else if (acadmicYear && branch && section) {
                         students = await Student.find({acadmicYear,branch,section})
-                        .select("enrollment_no")
+                        .select("enrollment_no firstName lastName rollNo")  
                         .lean()
                         .exec();
                     }

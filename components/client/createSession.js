@@ -66,6 +66,7 @@ const page = ({ teacherId }) => {
     const [message, setMessage] = useState("");
     const [success, setSuccess] = useState(false);
     const [location, setLocation] = useState({ latitude: null, longitude: null, accuracy: null });
+    const [confirmEnd, setConfirmEnd] = useState(false);
 
 
     const [batches, setBatches] = useState([]);
@@ -89,9 +90,7 @@ const page = ({ teacherId }) => {
             getCurrentPosition();
             return;
         } else {
-            if (sessionCode === "") {
-                setSessionCode(generateSessionCode())
-            }
+            
             alert(`Session code is ${sessionCode}`);
             const response = await fetch("/api/attendance/session/create", {
                 method: "POST",
@@ -114,6 +113,8 @@ const page = ({ teacherId }) => {
     }
     const handleEnd = async () => {
         setShowPopup(true)
+        setConfirmEnd(true)
+        
 
     }
     // Define a state variable to manage the checked state of the checkbox
@@ -335,6 +336,9 @@ const page = ({ teacherId }) => {
                     setSuccess={setSuccess}
                     setIsSession={setIsSession}
                     setSessionCode={setSessionCode}
+                    confirmEnd={confirmEnd}
+                    setConfirmEnd={setConfirmEnd}
+                    generateSessionCode={generateSessionCode}
                     setMessage={setMessage} // Pass setMessage as a prop
                 />
             )}

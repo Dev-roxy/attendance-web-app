@@ -5,7 +5,7 @@ import Table from "@/components/server/Table.layout";
 import FlashMessage from "@/components/client/flashMessage";
 import { useForm } from "react-hook-form";
 
-const dashboard = () => {
+const dashboard =  () => {
   const [showPopup, setShowPopup] = useState(false);
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
@@ -13,6 +13,8 @@ const dashboard = () => {
 
   const student_enrollment_no = "24BTIT1019";
 
+  const user = {
+    firstName: "Rohit"}
 
   const {
     register,
@@ -96,11 +98,11 @@ const dashboard = () => {
         />
       )}
       <h1 className="mt-4 text-xl mb-[0.5rem] px-4 text-[#3F0071] font-medium  font-poppins text-left  ">
-        {userName}’s Dashboard
+        {user.firstName}’s Dashboard
       </h1>
 
       <div className="alert shadow-md  bg-yellow-200 px-4 font-normal rounded-lg py-2 text-[#3F0071] box-border ">
-        <span className="">Alert : This is an alert for {userName}</span>
+        <span className="">Alert : This is an alert for {user.firstName}</span>
       </div>
 
 
