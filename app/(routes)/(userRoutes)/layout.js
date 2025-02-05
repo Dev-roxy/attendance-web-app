@@ -1,5 +1,6 @@
 import Navbar from "@/components/client/Navbar";
 import Footer from "@/components/client/footer.js";
+import { getUser } from "@/connections/fetchUser";
 
 
 
@@ -10,11 +11,10 @@ export const metadata = {
 };
 
 export default async function DashboardLayout({ children }) {
-   
- let user = "Rohit";
+const user = await getUser();
   return (
         <main className="container before:bg-[#F9F3F3] before:z-[-1] before:content-[' ']  before:h-full before:w-full before:absolute  max-phone:w-screen w-[640px] select-none mx-auto  min-h-screen flex flex-col relative ">
-          <Navbar user={user} />
+          <Navbar user={user.firstName} />
           <div className="flex-grow  bg-[#F9F3F3] *:mx-auto *:w-[93.75%]">
             {children}
           </div>

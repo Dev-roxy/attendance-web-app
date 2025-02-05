@@ -1,15 +1,25 @@
 import React from "react";
 
 
-const page = () => {
-  <>
-    <div>
-      <div className="loader mx-auto my-auto size-12 p-1 animate-spin flex justify-center items-center rounded-full bg-gradient-to-r from-blue-600 to-transparent">
-        <div className='bg-white dark:bg-black size-10 rounded-full '></div>
-      </div>
-    </div>
-  </>
+const test = () => {
+ return ( <>
+    <section className="load mb-4 py-4 w-80 min-h-[100px] flex flex-col justify-start items-center bg-white mt-2  rounded-lg shadow-md">
+    <section className="load   mb-4 py-4 w-80 min-h-[100px] flex  justify-start items-center bg-white mt-2  rounded-lg shadow-md">
+       {
+        sessions.map((session,index)=>{
+          return (<>
+          <SessionCard key={index} sessionCode={session.sessionCode} firstName={firstname} attendedOn={session.attendedOn.toString()} enrollment_no={enrollment_no} />
+          </>)
+        })
+       }
 
+        {
+          sessions.length === 0 && <p className="text-gray-400">No recent attended sessions</p>
+        }
+      </section>
+      </section>
+  </>
+)
 };
 
-export default page;
+export default test;

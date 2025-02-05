@@ -48,7 +48,7 @@ const Table = ({ students, readOnly, defaultAbsentStudent }) => {
                 key={index}
                 className="border-b border-gray-200 hover:bg-gray-100"
               >
-                <td className="py-3 px-4 font-semibold text-left">{student.roll}</td>
+                <td className="py-3 px-4 font-semibold text-left">{student.rollNo}</td>
                 <td className="py-3 px-4 font-semibold text-center">{student.fullName ? student.fullName : (student.firstName + student.lastName)}</td>
                 <td className="py-3 px-1 text-center">
                   <button
@@ -59,9 +59,8 @@ const Table = ({ students, readOnly, defaultAbsentStudent }) => {
                         toggleAttendanceButton(e)
                       }
                       student.present = !student.present
-                      console.log(student)
                     }}
-                    className={`  mx-auto py-1 box-border  h-10  ${defaultAbsentStudent ? "bg-[#FF0000] px-[11px]" : student.present ? "bg-[#00FF00]  px-2" : "bg-[#FF0000] px-[12px]"}  hover:bg-opacity-70 max-tablet:text-[1rem] font-poppins text-xl flex justify-center items-center font-[500] text-slate-900 rounded-md`}
+                    className={`  mx-auto py-1 box-border  h-10  ${defaultAbsentStudent ? "bg-[#FF0000] px-[11px]" : student.present ? "bg-[#00FF00]  px-2" : "bg-[#FF0000] px-[12px]"}  hover:bg-opacity-70 max-tablet:text-[1rem] font-poppins text-lg flex justify-center items-center font-[500] text-slate-900 rounded-md`}
                   >
                     {defaultAbsentStudent ? "Absent" : student.present ? "Present" : "Absent"}
                   </button>

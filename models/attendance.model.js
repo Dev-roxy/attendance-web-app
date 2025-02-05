@@ -7,6 +7,14 @@ const attendanceSchema = new mongoose.Schema(
       required: true,
     },
     student: {
+      firstName:{
+        type: String,
+        required: true,
+    },
+    lastName:{
+        type: String,
+        required: true,
+    },
       enrollment_no: {
         type: String,
         required: true,

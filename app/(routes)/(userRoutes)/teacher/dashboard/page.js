@@ -1,19 +1,10 @@
 import React from "react";
 import TeacherNavigation from "@/components/client/teacherNavigation";
-import Teacher from "@/models/teacher.model";
-import { connectDB } from "@/connections";
-import { cookies } from "next/headers";
+import { getUser } from "@/connections/fetchUser";
 
 export default async function Dashboard() {
- await connectDB();
- const cookie = await cookies();
- const payload = JSON.parse(cookie.get("user")["value"]);
-  const { email, phone, userType } = payload;
-  let user = await Teacher.findOne({ email, phone, userType })
-  .select("-password -__v -_id")
-  .lean()
-  .exec();
-  
+
+  const user =  await getUser("teacher");
 
   return (
     <>
@@ -23,7 +14,7 @@ export default async function Dashboard() {
       <div className="alert shadow-md bg-yellow-200 px-4 font-normal rounded-lg py-2 text-[#3F0071] box-border">
         <span className="">Alert : This is an alert for {user.firstName}</span>
       </div>
-      <TeacherNavigation />
+      <TeacherNavigation teacherId={user.enrollment_no}/>
       {/* <Table students={user.students} readOnly={false} defaultAbsentStudent={false} /> */}
     </>
   );

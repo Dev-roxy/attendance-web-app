@@ -91,7 +91,6 @@ const page = ({ teacherId }) => {
             return;
         } else {
             
-            alert(`Session code is ${sessionCode}`);
             const response = await fetch("/api/attendance/session/create", {
                 method: "POST",
                 body: JSON.stringify({ ...data, ...location, enrollment_no: teacherId, sessionCode }),
@@ -332,7 +331,7 @@ const page = ({ teacherId }) => {
                 <RenderPopup
                     setShowPopup={setShowPopup}
                     sessionCode={sessionCode}
-                    enrollment_no={teacherId}
+                    teacherId={teacherId}
                     setSuccess={setSuccess}
                     setIsSession={setIsSession}
                     setSessionCode={setSessionCode}

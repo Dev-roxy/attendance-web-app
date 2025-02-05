@@ -1,13 +1,14 @@
 import React from 'react'
 import CreateSession from '@/components/client/createSession'
-import WalkingAnimation from '@/components/client/walkingMan'
+import { getUser } from '@/connections/fetchUser'
 
-const page = () => {
+const page = async () => {
 
 
+    const user = await getUser("teacher")
     
-    const teacherId = "24BTIT1019"
-    const sessionCode = "123456"
+    const teacherId = user.enrollment_no
+    console.log(teacherId)
 
     return (
         <>

@@ -21,12 +21,13 @@ function calculateHaversineDistance (lat1, lon1, lat2, lon2, accuracy1 = 0, accu
     const accuracyInKm1 = accuracy1 / 1000; // Convert accuracy from meters to kilometers
     const accuracyInKm2 = accuracy2 / 1000; // Convert accuracy from meters to kilometers
     if (distance - accuracyInKm1 - accuracyInKm2 <= 0){
-        distance = 0; // If the distance is less than the sum of accuracies, set distance to 0
+        // If the distance is less than the sum of accuracies, set distance to 0
+        return distance;
     }else {
         distance -= accuracyInKm1 + accuracyInKm2; // Adjust distance by adding accuracies
+        return distance;
     } 
   
-    return distance;
   }
   
   // Helper function to convert degrees to radians
@@ -40,7 +41,7 @@ export async function POST(request) {
 
     await connectDB();
 
-    const {enrollment_no ,student_enrollment_no, sessionCode , latitude , longitude ,accuracy} = await request.json();
+    const {enrollment_no ,student_enrollment_no,ip, sessionCode , latitude , longitude ,accuracy} = await request.json();
     const studentAccuracy = accuracy;
     try {
         const teacher = await Teacher.findOne({enrollment_no}).exec();
@@ -78,8 +79,9 @@ export async function POST(request) {
 
         // Convert distance to meters
         const distanceInMeters = distance * 1000;
+        console.log(distanceInMeters)
         // Check if the distance is greater than 100 meters and log the appropriate message
-        if ( distanceInMeters >= 100) {
+        if ( distanceInMeters >= 600) {
             return NextResponse.json({
                 message: "You can't give attendance.",
                 success: false,
@@ -98,7 +100,21 @@ export async function POST(request) {
         
         let students = tempAttendance[`${enrollment_no}-${session.sessionCode}`];
 
-         const markedStudent = students.find((student) => {
+        
+
+
+        const sameIpStudent = students.map((student) => {
+            if (student.student.ip === ip ) {
+                return student;
+            }
+         });
+         if (sameIpStudent) {
+            return NextResponse.json({
+                message:"You have already marked the attendance from this device",
+                success: false,
+            },{status: 400});
+        }
+        const markedStudent = students.find((student) => {
             if (student.student.enrollment_no === student_enrollment_no && student.present === true) {
                 return student;
             }
@@ -117,6 +133,7 @@ export async function POST(request) {
                     student.student.accuracy = accuracy;
                     student.attendedOn = new Date();
                     student.present = true;
+                    student.ip = ip;
                 }
                 return student;
             });
@@ -126,7 +143,7 @@ export async function POST(request) {
                     success: false,
                 },{status: 404});
             }
-        tempAttendance[`${enrollment_no}-${session.sessionId}`] = students;
+        tempAttendance[`${enrollment_no}-${session.sessionCode}`] = students;
         fs.writeFileSync(process.cwd() + "/temp/memory/session/attendance.json", JSON.stringify(tempAttendance),"utf-8");
         return NextResponse.json({
             message: "Attendance marked successfully",

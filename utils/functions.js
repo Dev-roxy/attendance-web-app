@@ -1,3 +1,6 @@
+
+import * as XLSX from "xlsx";
+
 export const generateSessionId = async () => {
   const array = new Uint8Array(16); // 16 bytes = 128 bits
   crypto.getRandomValues(array);
@@ -39,4 +42,33 @@ export function decodeUser(encodedUser) {
   const user = JSON.parse(Buffer.from(encodedUser, "base64").toString())
   return user;
 
+}
+
+
+export async function exportToExcel(students , headers, filename) {
+  const worksheet = XLSX.utils.json_to_sheet(students, { header: headers });
+          const workbook = XLSX.utils.book_new();
+  
+          const headerStyle = {
+              fill: { fgColor: { rgb: "FFD700" } }, // Golden background
+              font: { bold: true, color: { rgb: "000000" } }, // Bold Black Text
+              alignment: { horizontal: "center", vertical: "center" }, // Center align
+              border: {
+                top: { style: "thin", color: { rgb: "000000" } },
+                bottom: { style: "thin", color: { rgb: "000000" } },
+                left: { style: "thin", color: { rgb: "000000" } },
+                right: { style: "thin", color: { rgb: "000000" } },
+              },
+            };
+            
+            // Apply styles to headers
+            headers.forEach((header, colIndex) => {
+              const cellAddress = XLSX.utils.encode_cell({ r: 0, c: colIndex }); // First row (header)
+              if (!worksheet[cellAddress]) return;
+              worksheet[cellAddress].s = headerStyle;
+            });
+  
+          XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+  
+          await XLSX.writeFile(workbook,  filename);
 }

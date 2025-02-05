@@ -72,12 +72,17 @@ export async function POST(req) {
                         return {
                             sessionId: session.sessionId,
                             student: {
+                                firstName : student.firstName,
+                                lastName : student.lastName,
+                                rollNo : student.rollNo,
                                 enrollment_no: student.enrollment_no,
                                 latitude: null,
                                 longitude: null,
                                 accuracy: null,
+                                ip:null
                             },
                             attendedOn: null,
+                            present:null
                         };
                     });
             

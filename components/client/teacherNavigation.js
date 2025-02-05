@@ -2,7 +2,7 @@
 import React from 'react'
 import { useRouter } from 'next/navigation';
 
-const teacherNavigation = () => {
+const teacherNavigation = ({teacherId}) => {
     const router = useRouter();
     return (
         <>
@@ -14,7 +14,7 @@ const teacherNavigation = () => {
                 <button
                     type="button"
                     onClick={() => {
-                        router.push('/teacher/dashboard/attendance/manual');
+                        router.push('/teacher/dashboard/attendance/manual?id=' + teacherId);
                     }}
                     className="max-phone:text-[1rem] py-1 mx-auto my-4 box-border px-2 h-10  bg-[#00FF00] hover:bg-opacity-70  font-poppins text-xl flex justify-center items-center font-[500] text-[#3F0071] rounded-md"
                 >
