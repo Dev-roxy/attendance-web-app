@@ -58,7 +58,7 @@ const Page = ({ teacherId }) => {
             setSessionCode(generateSessionCode())
         }
 
-    }, []);
+    }, [sessionCode]);
 
     const {
         register,

@@ -577,7 +577,7 @@ const AuthPage = () => {
             {
               isRegister && userType === 'teacher' && reapply && (
                 <p className="text-sm text-center mt-4">
-                  Don't want to re-apply?
+                  Don&apos;t want to re-apply?
                   <button
                     type="button"
                     onClick={e => {

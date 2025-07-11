@@ -1,10 +1,9 @@
 "use client";
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const FlashMessage = ({ message, success ,uCallback}) => {
+const FlashMessage = ({ message, success ,callback}) => {
   const [visible, setVisible] = useState(true);
   const [progress, setProgress] = useState(100);
-let callback = useCallback(uCallback, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -18,7 +17,7 @@ let callback = useCallback(uCallback, []);
     }
 
     return () => clearInterval(interval);
-  }, [progress]);
+  }, [progress, callback]);
 
   if (!visible) return null;
 
