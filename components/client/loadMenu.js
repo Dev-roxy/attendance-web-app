@@ -3,7 +3,7 @@ import React ,{useState} from "react";
 import { useForm } from "react-hook-form";
 
 
-const loadMenu = () => {
+const LoadMenu = () => {
   const handleSearch = e => {
     alert("searched");
   };
@@ -68,4 +68,4 @@ const loadMenu = () => {
   );
 };
 
-export default loadMenu;
+export default LoadMenu;

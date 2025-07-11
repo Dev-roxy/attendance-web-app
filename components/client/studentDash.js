@@ -9,7 +9,7 @@ import { getUser } from "@/connections/fetchUser";
 
 
 
-const dashboard =  ({user}) => {
+const Dashboard =  ({user}) => {
   const [showPopup, setShowPopup] = useState(false);
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
@@ -25,35 +25,35 @@ const dashboard =  ({user}) => {
     formState: { errors, isSubmitting },
   } = useForm();
 
-  const getCurrentPosition = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setLocation({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-            accuracy: position.coords.accuracy,
-          });
-          setMessage('Location fetched successfully');
-          setSuccess(true);
-        },
-        (err) => {
-          setMessage(err.message);
-          setSuccess(false);
-          getCurrentPosition();
-        }, {
-        enableHighAccuracy: true,
-        timeout: 5000,
-        maximumAge: 0
-      }
-      );
-    } else {
-      setMessage('Geolocation is not supported by this browser.');
-      setSuccess(false);
-    }
-  }
-
+  
   useEffect(() => {
+    const getCurrentPosition = () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            setLocation({
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+              accuracy: position.coords.accuracy,
+            });
+            setMessage('Location fetched successfully');
+            setSuccess(true);
+          },
+          (err) => {
+            setMessage(err.message);
+            setSuccess(false);
+            getCurrentPosition();
+          }, {
+          enableHighAccuracy: true,
+          timeout: 5000,
+          maximumAge: 0
+        }
+        );
+      } else {
+        setMessage('Geolocation is not supported by this browser.');
+        setSuccess(false);
+      }
+    }
 
     getCurrentPosition();
   }, []);
@@ -178,4 +178,4 @@ const renderPopup = () => {
   );
 };
 
-export default dashboard;
+export default Dashboard;

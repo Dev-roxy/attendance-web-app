@@ -2,7 +2,7 @@
 import React from 'react'
 import { useRouter } from 'next/navigation';
 
-const teacherNavigation = ({teacherId}) => {
+const TeacherNavigation = ({teacherId}) => {
     const router = useRouter();
     return (
         <>
@@ -34,4 +34,4 @@ const teacherNavigation = ({teacherId}) => {
     )
 }
 
-export default teacherNavigation
+export default TeacherNavigation

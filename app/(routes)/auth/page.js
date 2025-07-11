@@ -561,13 +561,13 @@ const AuthPage = () => {
             {
               isRegister && userType === 'teacher' && !reapply && (
                 <p className="text-sm text-center mt-4">
-                  Your register application is rejected?{" "}
+                  Your register application is rejected?
                   <button
                     type="button"
                     onClick={e => {
                       setReapply(true)
                     }}
-                    className="text-blue-600  hover:underline"
+                    className="text-blue-600  hover:underline ml-2"
                   >
                     Re-apply
                   </button>
@@ -577,13 +577,13 @@ const AuthPage = () => {
             {
               isRegister && userType === 'teacher' && reapply && (
                 <p className="text-sm text-center mt-4">
-                  Don't want to re-apply?{" "}
+                  Don't want to re-apply?
                   <button
                     type="button"
                     onClick={e => {
                       setReapply(false)
                     }}
-                    className="text-blue-600 bg-opacity- hover:underline"
+                    className="text-blue-600 bg-opacity- hover:underline ml-2"
                   >
                     Back to Register
                   </button>
@@ -591,7 +591,7 @@ const AuthPage = () => {
               )
             }
             <p className="text-sm text-center mt-4">
-              {isRegister ? "Already have an account?" : "Don't have an account?"}{" "}
+              {isRegister ? "Already have an account?" : "Don't have an account?"}
               <button
                 type="button"
                 onClick={e => {
@@ -608,7 +608,7 @@ const AuthPage = () => {
                     setReapply(false)
                   }
                 }}
-                className="text-blue-600  hover:underline"
+                className="text-blue-600  hover:underline ml-2"
               >
                 {isRegister ? "Login" : "Register"}
               </button>

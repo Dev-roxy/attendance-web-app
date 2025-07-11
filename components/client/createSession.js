@@ -4,47 +4,55 @@ import { useForm } from 'react-hook-form'
 import FlashMessage from "@/components/client/flashMessage";
 import RenderPopup from './sessionPopup';
 
-const page = ({ teacherId }) => {
+const Page = ({ teacherId }) => {
 
-    const generateSessionCode = () => {
-        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        let sessionCode = '';
-        for (let i = 0; i < 5; i++) {
-            const randomIndex = Math.floor(Math.random() * characters.length);
-            sessionCode += characters[randomIndex];
-        }
-        return sessionCode;
-    };
-    const getCurrentPosition = () => {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    setLocation({
-                        latitude: position.coords.latitude,
-                        longitude: position.coords.longitude,
-                        accuracy: position.coords.accuracy,
-                    });
-                    setMessage('Location fetched successfully');
-                    setSuccess(true);
-                },
-                (err) => {
-                    setMessage(err.message);
-                    setSuccess(false);
-                    getCurrentPosition();
-                }, {
-                enableHighAccuracy: true,
-                timeout: 5000,
-                maximumAge: 0
-            }
-            );
-        } else {
-            setMessage('Geolocation is not supported by this browser.');
-            setSuccess(false);
-        }
-    }
+    
+    const [isSession, setIsSession] = useState(false)
+    const [showTable, setShowTable] = useState(false)
+    const [sessionCode, setSessionCode] = useState("")
+    const [message, setMessage] = useState("");
+    const [success, setSuccess] = useState(false);
+    const [location, setLocation] = useState({ latitude: null, longitude: null, accuracy: null });
+    const [confirmEnd, setConfirmEnd] = useState(false);
 
     useEffect(() => {
-
+        
+        const generateSessionCode = () => {
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let sessionCode = '';
+            for (let i = 0; i < 5; i++) {
+                const randomIndex = Math.floor(Math.random() * characters.length);
+                sessionCode += characters[randomIndex];
+            }
+            return sessionCode;
+        };
+        const getCurrentPosition = () => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        setLocation({
+                            latitude: position.coords.latitude,
+                            longitude: position.coords.longitude,
+                            accuracy: position.coords.accuracy,
+                        });
+                        setMessage('Location fetched successfully');
+                        setSuccess(true);
+                    },
+                    (err) => {
+                        setMessage(err.message);
+                        setSuccess(false);
+                        getCurrentPosition();
+                    }, {
+                    enableHighAccuracy: true,
+                    timeout: 5000,
+                    maximumAge: 0
+                }
+                );
+            } else {
+                setMessage('Geolocation is not supported by this browser.');
+                setSuccess(false);
+            }
+        }
         getCurrentPosition();
         if (sessionCode === "") {
             setSessionCode(generateSessionCode())
@@ -59,14 +67,6 @@ const page = ({ teacherId }) => {
         formState: { errors, isSubmitting },
         clearErrors,
     } = useForm({});
-
-    const [isSession, setIsSession] = useState(false)
-    const [showTable, setShowTable] = useState(false)
-    const [sessionCode, setSessionCode] = useState("")
-    const [message, setMessage] = useState("");
-    const [success, setSuccess] = useState(false);
-    const [location, setLocation] = useState({ latitude: null, longitude: null, accuracy: null });
-    const [confirmEnd, setConfirmEnd] = useState(false);
 
 
     const [batches, setBatches] = useState([]);
@@ -348,4 +348,4 @@ const page = ({ teacherId }) => {
 
 
 
-export default page
+export default Page

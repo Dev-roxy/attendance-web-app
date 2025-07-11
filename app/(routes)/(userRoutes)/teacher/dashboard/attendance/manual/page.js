@@ -24,7 +24,7 @@ const popup = () => {
 }
 
 
-const page = () => {
+const Page = () => {
 
     const searchParams = useSearchParams()
     const teacherId = searchParams.get('id')
@@ -296,4 +296,4 @@ const page = () => {
 
 
 
-export default page
+export default Page

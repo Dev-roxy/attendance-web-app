@@ -15,27 +15,27 @@ const TeacherApproval = () => {
   const [success, setSuccess] = useState(false);
   const [approvals, setApprovals] = useState([]);
 
-  const fetchApprovals = async () => {
-    try {
-      setIsLoading(true)
-      const response = await fetch("/api/get/approvals",{cache: "no-store"}); // Disable cache
-      const data = await response.json();
-
-      if (response.ok) {
-        setApprovals(data.approvals);
-      } else {
-        setApprovals([]);
-        setFlashMessage(data.message || "Failed to fetch approvals", false);
-      }
-    } catch (error) {
-      setFlashMessage("Error fetching approvals. Please try again.", false);
-      setApprovals([]);
-    }finally{
-      setIsLoading(false)
-    }
-  };
-
+  
   useEffect(() => {
+    const fetchApprovals = async () => {
+      try {
+        setIsLoading(true)
+        const response = await fetch("/api/get/approvals",{cache: "no-store"}); // Disable cache
+        const data = await response.json();
+  
+        if (response.ok) {
+          setApprovals(data.approvals);
+        } else {
+          setApprovals([]);
+          setFlashMessage(data.message || "Failed to fetch approvals", false);
+        }
+      } catch (error) {
+        setFlashMessage("Error fetching approvals. Please try again.", false);
+        setApprovals([]);
+      }finally{
+        setIsLoading(false)
+      }
+    };
 
     fetchApprovals();
   }, []);
